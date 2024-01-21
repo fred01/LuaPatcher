@@ -219,6 +219,9 @@ class Builder:
         self._hidden_handled: bool = False
         self._hidden_handled_stack: List[bool] = []
 
+        # special case for stupid PIPE in function call
+        self._pipe_in_function_call: bool = False
+
     @property
     def _LT(self) -> CommonToken:
         """Last token that was consumed in next_i*_* method."""
@@ -650,7 +653,11 @@ class Builder:
             )
             if self.next_is_rc(Tokens.OPAR):
                 expr_list = self.parse_expr_list() or []
-                if self.next_is_rc(Tokens.CPAR, False):
+                if self._pipe_in_function_call:
+                    self._pipe_in_function_call = False
+                    self.success()
+                    return Invoke(None, name, expr_list)
+                elif self.next_is_rc(Tokens.CPAR, False):
                     self.success()
                     # noinspection PyTypeChecker
                     return Invoke(None, name, expr_list)
@@ -697,11 +704,17 @@ class Builder:
                         raise SyntaxException(
                             "Ambiguous syntax detected", self._stream.LT(-1)
                         )
+        if self.next_is_rc(Tokens.BITOR):
+            self.handle_hidden_right()
+            expr = self.parse_expr()
+            if expr:
+                self.success()
+                return Call(None, expr, last_token=self._LT)
 
         if self.next_is_rc(Tokens.OPAR, False):
             self.handle_hidden_right()
             expr_list = self.parse_expr_list() or []
-            if self.next_is_rc(Tokens.CPAR, False):
+            if self.next_is_rc(Tokens.CPAR, False) or True:
                 self.success()
                 # noinspection PyTypeChecker
                 return Call(None, expr_list, last_token=self._LT)
@@ -730,19 +743,22 @@ class Builder:
                 self.save()
                 if self.next_is_rc(Tokens.COMMA):
                     self._expected = []
-                    expr = self.parse_expr()
-                    if expr:
-                        if isinstance(expr, StringifiedName):
-                            expr_list.append(String(expr.id))
-                            expr_list.append(Name(expr.id))
-                        else:
+                    if self.next_is_rc(Tokens.BITOR) and self.next_is_rc(Tokens.CPAR):
+                        expr = self.parse_expr()
+                        if expr:
                             expr_list.append(expr)
-                        self.success()
+                            self.success()
+                            self._pipe_in_function_call = True
                     else:
-                        # a comma is alone at the end
-                        self.failure()
-                        self.failure()
-                        self.abort()
+                        expr = self.parse_expr()
+                        if expr:
+                            expr_list.append(expr)
+                            self.success()
+                        else:
+                            # a comma is alone at the end
+                            self.failure()
+                            self.failure()
+                            self.abort()
                 else:
                     self.failure()
                     break
@@ -901,7 +917,7 @@ class Builder:
                         if self.next_is_rc(Tokens.END):
                             self.success()
                             return main
-            self.abort()
+                self.abort()
         return self.failure()
 
     def parse_elseif_stat(self) -> ElseIf or bool:
@@ -964,7 +980,7 @@ class Builder:
                 if self.next_is_rc(Tokens.IN):
                     iter_expr = self.parse_expr_list()
                     if iter_expr:
-                        body = self.parse_do_block()
+                        body = self.parse_optional_do_block()
                         if body:
                             self.success()
                             self.success()
