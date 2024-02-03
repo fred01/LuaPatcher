@@ -10,6 +10,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 source_directory = "/home/fred/tmp/Stars in Shadow/Lua state"
 target_directory = "/home/fred/tmp/LuaState/"
 
+# source_directory = "/home/fred/tmp/Mods/Source"
+# target_directory = "/home/fred/tmp/Mods/Target"
+
 # Create the target directory if it does not exist
 os.makedirs(target_directory, exist_ok=True)
 

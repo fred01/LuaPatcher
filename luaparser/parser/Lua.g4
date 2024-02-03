@@ -195,11 +195,14 @@ callee[bool assign]
 
 tail
   : DOT NAME                      # tail_dot_index
+  | REQFIELD                      # tail_required_field
+  | OPTIONALFIELD                 # tail_optional_field
   | OBRACK expr CBRACK            # tail_brack_index
   | COL NAME OPAR expr_list? CPAR # tail_invoke
   | COL NAME table_constructor    # tail_invoke_table
   | COL NAME STRING               # tail_invoke_str
   | OPAR expr_list? CPAR          # tail_call
+  | BITOR expr                    # tail_call_with_pipe
   | table_constructor             # tail_table
   | STRING                        # tail_string
   ;
@@ -296,6 +299,8 @@ VARARGS   : '...';
 CONCAT    : '..';
 DOT       : '.';
 SEMCOL     : ';';
+REQFIELD  : '!';
+OPTIONALFIELD : '?';
 
 NAME
   : (Letter | '_') (Letter | '_' | Digit)*

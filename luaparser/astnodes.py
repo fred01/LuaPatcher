@@ -203,6 +203,7 @@ class Name(Lhs):
         super(Name, self).__init__("Name", **kwargs)
         self.id: str = identifier
 
+
 class StringifiedName(Lhs):
     """Define a Lua name expression.
 
@@ -212,6 +213,30 @@ class StringifiedName(Lhs):
 
     def __init__(self, identifier: str, **kwargs):
         super(StringifiedName, self).__init__("StringifiedName", **kwargs)
+        self.id: str = identifier
+
+
+class RequiredField(Lhs):
+    """Define a Lua required field expression.
+
+    Attributes:
+        id (`string`): Id.
+    """
+
+    def __init__(self, value: Expression, **kwargs):
+        super(RequiredField, self).__init__("RequiredField", **kwargs)
+        self.value: Expression = value
+
+
+class OptionalField(Lhs):
+    """Define a Lua optional field expression.
+
+    Attributes:
+        id (`string`): Id.
+    """
+
+    def __init__(self, identifier: str, **kwargs):
+        super(OptionalField, self).__init__("OptionalField", **kwargs)
         self.id: str = identifier
 
 

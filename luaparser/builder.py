@@ -33,71 +33,71 @@ class Expr(Enum):
     ATOM = 10
 
 
-class Tokens:
-    AND = 1
-    BREAK = 2
-    DO = 3
-    ELSETOK = 4
-    ELSEIF = 5
-    END = 6
-    FALSE = 7
-    FOR = 8
-    FUNCTION = 9
-    GOTO = 10
-    IFTOK = 11
-    IN = 12
-    LOCAL = 13
-    NIL = 14
-    NOT = 15
-    OR = 16
-    REPEAT = 17
-    RETURN = 18
-    THEN = 19
-    TRUE = 20
-    UNTIL = 21
-    WHILE = 22
-    ADD = 23
-    MINUS = 24
-    MULT = 25
-    DIV = 26
-    FLOOR = 27
-    MOD = 28
-    POW = 29
-    LENGTH = 30
-    EQ = 31
-    NEQ = 32
-    LTEQ = 33
-    GTEQ = 34
-    LT = 35
-    GT = 36
-    ASSIGN = 37
-    BITAND = 38
-    BITOR = 39
-    BITNOT = 40
-    BITRSHIFT = 41
-    BITRLEFT = 42
-    OPAR = 43
-    CPAR = 44
-    OBRACE = 45
-    CBRACE = 46
-    OBRACK = 47
-    CBRACK = 48
-    COLCOL = 49
-    COL = 50
-    COMMA = 51
-    VARARGS = 52
-    CONCAT = 53
-    DOT = 54
-    SEMCOL = 55
-    NAME = 56
-    NUMBER = 57
-    STRING = 58
-    COMMENT = 59
-    LINE_COMMENT = 60
-    SPACE = 61
-    NEWLINE = 62
-    SHEBANG = 63
-    LongBracket = 64
+# class Tokens:
+#     AND = 1
+#     BREAK = 2
+#     DO = 3
+#     ELSETOK = 4
+#     ELSEIF = 5
+#     END = 6
+#     FALSE = 7
+#     FOR = 8
+#     FUNCTION = 9
+#     GOTO = 10
+#     IFTOK = 11
+#     IN = 12
+#     LOCAL = 13
+#     NIL = 14
+#     NOT = 15
+#     OR = 16
+#     REPEAT = 17
+#     RETURN = 18
+#     THEN = 19
+#     TRUE = 20
+#     UNTIL = 21
+#     WHILE = 22
+#     ADD = 23
+#     MINUS = 24
+#     MULT = 25
+#     DIV = 26
+#     FLOOR = 27
+#     MOD = 28
+#     POW = 29
+#     LENGTH = 30
+#     EQ = 31
+#     NEQ = 32
+#     LTEQ = 33
+#     GTEQ = 34
+#     LT = 35
+#     GT = 36
+#     ASSIGN = 37
+#     BITAND = 38
+#     BITOR = 39
+#     BITNOT = 40
+#     BITRSHIFT = 41
+#     BITRLEFT = 42
+#     OPAR = 43
+#     CPAR = 44
+#     OBRACE = 45
+#     CBRACE = 46
+#     OBRACK = 47
+#     CBRACK = 48
+#     COLCOL = 49
+#     COL = 50
+#     COMMA = 51
+#     VARARGS = 52
+#     CONCAT = 53
+#     DOT = 54
+#     SEMCOL = 55
+#     NAME = 56
+#     NUMBER = 57
+#     STRING = 58
+#     COMMENT = 59
+#     LINE_COMMENT = 60
+#     SPACE = 61
+#     NEWLINE = 62
+#     SHEBANG = 63
+#     LongBracket = 64
 
 
 LITERAL_NAMES = [
@@ -177,24 +177,24 @@ def _listify(obj):
 
 
 class Builder:
-    CLOSING_TOKEN = [Tokens.END, Tokens.CBRACE, Tokens.CPAR]
+    CLOSING_TOKEN = [LuaLexer.END, LuaLexer.CBRACE, LuaLexer.CPAR]
 
     HIDDEN_TOKEN = [
-        Tokens.SHEBANG,
-        Tokens.LINE_COMMENT,
-        Tokens.COMMENT,
-        Tokens.NEWLINE,
-        Tokens.SPACE,
+        LuaLexer.SHEBANG,
+        LuaLexer.LINE_COMMENT,
+        LuaLexer.COMMENT,
+        LuaLexer.NEWLINE,
+        LuaLexer.SPACE,
         -2,
     ]
 
     REL_OPERATORS = [
-        Tokens.LT,
-        Tokens.GT,
-        Tokens.LTEQ,
-        Tokens.GTEQ,
-        Tokens.NEQ,
-        Tokens.EQ,
+        LuaLexer.LT,
+        LuaLexer.GT,
+        LuaLexer.LTEQ,
+        LuaLexer.GTEQ,
+        LuaLexer.NEQ,
+        LuaLexer.EQ,
     ]
 
     def __init__(self, source):
@@ -340,7 +340,7 @@ class Builder:
         tokens = self._stream.getHiddenTokensToLeft(self._stream.index)
         if tokens:
             for t in tokens:
-                if t.type == Tokens.LINE_COMMENT:
+                if t.type == LuaLexer.LINE_COMMENT:
                     self.comments.append(
                         Comment(
                             t.text,
@@ -348,7 +348,7 @@ class Builder:
                             last_token=t,
                         )
                     )
-                elif t.type == Tokens.COMMENT:
+                elif t.type == LuaLexer.COMMENT:
                     self.comments.append(
                         Comment(
                             t.text,
@@ -357,7 +357,7 @@ class Builder:
                             last_token=t,
                         )
                     )
-                elif t.type == Tokens.NEWLINE:
+                elif t.type == LuaLexer.NEWLINE:
                     # append n time a None value (indicate newline)
                     self.comments += t.text.count("\n") * [None]
 
@@ -369,7 +369,7 @@ class Builder:
         tokens = self._stream.getHiddenTokensToRight(self._right_index)
         if tokens:
             for t in tokens:
-                if t.type == Tokens.LINE_COMMENT:
+                if t.type == LuaLexer.LINE_COMMENT:
                     self.comments.append(
                         Comment(
                             t.text,
@@ -377,7 +377,7 @@ class Builder:
                             last_token=t,
                         )
                     )
-                elif t.type == Tokens.COMMENT:
+                elif t.type == LuaLexer.COMMENT:
                     self.comments.append(
                         Comment(
                             t.text,
@@ -386,7 +386,7 @@ class Builder:
                             last_token=t,
                         )
                     )
-                elif t.type == Tokens.NEWLINE:
+                elif t.type == LuaLexer.NEWLINE:
                     # append n time a None value (indicate newline)
                     self.comments += t.text.count("\n") * [None]
 
@@ -515,10 +515,10 @@ class Builder:
             self.handle_hidden_right()
             return Do(stat)
 
-        if self.next_is(Tokens.BREAK) and self.next_is_rc(Tokens.BREAK):
+        if self.next_is(LuaLexer.BREAK) and self.next_is_rc(LuaLexer.BREAK):
             self.handle_hidden_right()
             return Break()
-        if self.next_is(Tokens.SEMCOL) and self.next_is_rc(Tokens.SEMCOL):
+        if self.next_is(LuaLexer.SEMCOL) and self.next_is_rc(LuaLexer.SEMCOL):
             self.handle_hidden_right()
             return SemiColon()
 
@@ -526,12 +526,12 @@ class Builder:
 
     def parse_ret_stat(self) -> Return or bool:
         self.save()
-        if self.next_is_rc(Tokens.RETURN):
+        if self.next_is_rc(LuaLexer.RETURN):
             t: Token = self._LT
             expr_list = self.parse_expr_list()  # optional
             # consume optional token
-            if self.next_is(Tokens.SEMCOL):
-                self.next_is_rc(Tokens.SEMCOL)
+            if self.next_is(LuaLexer.SEMCOL):
+                self.next_is_rc(LuaLexer.SEMCOL)
 
             self.success()
             return Return(expr_list, first_token=t, last_token=self._LT)
@@ -542,7 +542,7 @@ class Builder:
         t: Token = self._stream.LT(1)
         targets = self.parse_var_list()
         if targets:
-            if self.next_is_rc(Tokens.ASSIGN):
+            if self.next_is_rc(LuaLexer.ASSIGN):
                 values = self.parse_expr_list()
                 if values:
                     self.success()
@@ -565,7 +565,7 @@ class Builder:
             lua_vars.append(var)
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.COMMA):
+                if self.next_is_rc(LuaLexer.COMMA):
                     var = self.parse_var()
                     if var:
                         lua_vars.append(var)
@@ -595,6 +595,10 @@ class Builder:
                     tail.value = root
                 elif isinstance(tail, Invoke):
                     tail.source = root
+                elif isinstance(tail, RequiredField):
+                    tail.value = root
+                elif isinstance(tail, OptionalField):
+                    tail.value = root
                 else:
                     args = _listify(tail)
                     tail = Call(
@@ -619,7 +623,15 @@ class Builder:
     def parse_tail(self) -> Node or bool:
         # do not render last hidden
         self.save()
-        if self.next_is_rc(Tokens.DOT) and self.next_is_rc(Tokens.NAME, False):
+        if self.next_is_rc(LuaLexer.REQFIELD):
+            self.success()
+            return RequiredField(None)  # value will be set in parent
+
+        if self.next_is_rc(LuaLexer.OPTIONALFIELD):
+            self.success()
+            return OptionalField(None)  # value will be set in parent
+
+        if self.next_is_rc(LuaLexer.DOT) and self.next_is_rc(LuaLexer.NAME, False):
             self.success()
             return Index(
                 Name(
@@ -633,9 +645,9 @@ class Builder:
             )
 
         self.failure_save()
-        if self.next_is_rc(Tokens.OBRACK):
+        if self.next_is_rc(LuaLexer.OBRACK):
             expr = self.parse_expr()
-            if expr and self.next_is_rc(Tokens.CBRACK, False):
+            if expr and self.next_is_rc(LuaLexer.CBRACK, False):
                 self.success()
                 return Index(
                     expr,
@@ -645,25 +657,25 @@ class Builder:
                 )
 
         self.failure_save()
-        if self.next_is_rc(Tokens.COL) and self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.COL) and self.next_is_rc(LuaLexer.NAME):
             name = Name(
                 self.text,
                 first_token=self._LT,
                 last_token=self._LT,
             )
-            if self.next_is_rc(Tokens.OPAR):
+            if self.next_is_rc(LuaLexer.OPAR):
                 expr_list = self.parse_expr_list() or []
                 if self._pipe_in_function_call:
                     self._pipe_in_function_call = False
                     self.success()
                     return Invoke(None, name, expr_list)
-                elif self.next_is_rc(Tokens.CPAR, False):
+                elif self.next_is_rc(LuaLexer.CPAR, False):
                     self.success()
                     # noinspection PyTypeChecker
                     return Invoke(None, name, expr_list)
 
         self.failure_save()
-        if self.next_is_rc(Tokens.COL) and self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.COL) and self.next_is_rc(LuaLexer.NAME):
             name = Name(
                 self.text,
                 first_token=self._LT,
@@ -676,20 +688,20 @@ class Builder:
                 return Invoke(None, name, [table])
 
         self.failure_save()
-        if self.next_is_rc(Tokens.COL) and self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.COL) and self.next_is_rc(LuaLexer.NAME):
             name = Name(
                 self.text,
                 first_token=self._LT,
                 last_token=self._LT,
             )
-            if self.next_is_rc(Tokens.STRING, False):
+            if self.next_is_rc(LuaLexer.STRING, False):
                 string = self.parse_lua_str(self.text, self._LT)
                 self.success()
                 # noinspection PyTypeChecker
                 return Invoke(None, name, [string])
 
         self.failure_save()
-        if self.next_is(Tokens.OPAR):
+        if self.next_is(LuaLexer.OPAR):
             # handle the ambiguous syntax
             # http://lua-users.org/lists/lua-l/2009-08/msg00543.html
             # example:
@@ -700,21 +712,30 @@ class Builder:
             tokens = self._stream.getHiddenTokensToLeft(self._stream.index)
             if tokens:
                 for t in tokens:
-                    if t.type == Tokens.NEWLINE and not self.prev_is(Tokens.SEMCOL):
+                    if t.type == LuaLexer.NEWLINE and not self.prev_is(LuaLexer.SEMCOL):
                         raise SyntaxException(
                             "Ambiguous syntax detected", self._stream.LT(-1)
                         )
-        if self.next_is_rc(Tokens.BITOR):
-            self.handle_hidden_right()
-            expr = self.parse_expr()
-            if expr:
-                self.success()
-                return Call(None, expr, last_token=self._LT)
+        self.failure_save()
+        if self.next_is_rc(LuaLexer.BITOR):
+            if self.next_is_rc(LuaLexer.FUNCTION):
+                self.handle_hidden_right()
+                body = self.parse_func_body()
+                if body:
+                    self.success()
+                    function_arg = Function(None, body[0], body[1])
+                    return Call(None, [function_arg], last_token=self._LT)
+            elif not self.next_is(LuaLexer.CPAR):
+                self.handle_hidden_right()
+                expr = self.parse_expr()
+                if expr:
+                    self.success()
+                    return Call(None, expr, last_token=self._LT)
 
-        if self.next_is_rc(Tokens.OPAR, False):
+        if self.next_is_rc(LuaLexer.OPAR, False):
             self.handle_hidden_right()
             expr_list = self.parse_expr_list() or []
-            if self.next_is_rc(Tokens.CPAR, False) or True:
+            if self.next_is_rc(LuaLexer.CPAR, False) or True:
                 self.success()
                 # noinspection PyTypeChecker
                 return Call(None, expr_list, last_token=self._LT)
@@ -726,7 +747,7 @@ class Builder:
             return table
 
         self.failure_save()
-        if self.next_is_rc(Tokens.STRING, False):
+        if self.next_is_rc(LuaLexer.STRING, False):
             string = self.parse_lua_str(self.text, self._LT)
             self.success()
             return string
@@ -741,9 +762,9 @@ class Builder:
             expr_list.append(expr)
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.COMMA):
+                if self.next_is_rc(LuaLexer.COMMA):
                     self._expected = []
-                    if self.next_is_rc(Tokens.BITOR) and self.next_is_rc(Tokens.CPAR):
+                    if self.next_is_rc(LuaLexer.BITOR) and self.next_is_rc(LuaLexer.CPAR):
                         expr = self.parse_expr()
                         if expr:
                             expr_list.append(expr)
@@ -768,29 +789,29 @@ class Builder:
 
     def parse_do_block(self) -> Block or bool:
         self.save()
-        if self.next_is_rc(Tokens.DO, False):  # or True:
+        if self.next_is_rc(LuaLexer.DO, False):  # or True:
             self.handle_hidden_right()
             block = self.parse_block()
             if block:
-                if self.next_is_rc(Tokens.END):
+                if self.next_is_rc(LuaLexer.END):
                     self.success()
                     return block
         return self.failure()
 
     def parse_optional_do_block(self) -> Block or bool:
         self.save()
-        if self.next_is_rc(Tokens.DO, False) or True:
+        if self.next_is_rc(LuaLexer.DO, False) or True:
             self.handle_hidden_right()
             block = self.parse_block()
             if block:
-                if self.next_is_rc(Tokens.END):
+                if self.next_is_rc(LuaLexer.END):
                     self.success()
                     return block
         return self.failure()
 
     def parse_while_stat(self) -> While or bool:
         self.save()
-        if self.next_is_rc(Tokens.WHILE):
+        if self.next_is_rc(LuaLexer.WHILE):
             self._expected = []
             expr = self.parse_expr()
             if expr:
@@ -805,11 +826,11 @@ class Builder:
 
     def parse_repeat_stat(self) -> Repeat or bool:
         self.save()
-        if self.next_is_rc(Tokens.REPEAT, False):
+        if self.next_is_rc(LuaLexer.REPEAT, False):
             self.handle_hidden_right()
             body = self.parse_block()
             if body:
-                if self.next_is_rc(Tokens.UNTIL):
+                if self.next_is_rc(LuaLexer.UNTIL):
                     expr = self.parse_expr()
                     if expr:
                         self.success()
@@ -820,13 +841,13 @@ class Builder:
     def parse_local(self) -> Node or bool:
         self.save()
         self._expected = []
-        start_token = self.next_is_rc(Tokens.LOCAL)
+        start_token = self.next_is_rc(LuaLexer.LOCAL)
         if start_token:
             targets = self.parse_name_list()
             if targets:
                 values = []
                 self.save()
-                if self.next_is_rc(Tokens.ASSIGN):
+                if self.next_is_rc(LuaLexer.ASSIGN):
                     values = self.parse_expr_list()
                     if values:
                         self.success()
@@ -834,7 +855,7 @@ class Builder:
                         self.failure()
                         self.failure()
                         self.abort()
-                elif self.next_is_rc(Tokens.IN):
+                elif self.next_is_rc(LuaLexer.IN):
                     value = self.parse_names()
                     for target in targets:
                         values.append(
@@ -858,7 +879,7 @@ class Builder:
 
             self.save()
 
-            if self.next_is_rc(Tokens.FUNCTION) and self.next_is_rc(Tokens.NAME):
+            if self.next_is_rc(LuaLexer.FUNCTION) and self.next_is_rc(LuaLexer.NAME):
                 name = Name(
                     self.text,
                     first_token=self._LT,
@@ -880,7 +901,7 @@ class Builder:
 
     def parse_goto_stat(self) -> Goto or bool:
         self.save()
-        if self.next_is_rc(Tokens.GOTO) and self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.GOTO) and self.next_is_rc(LuaLexer.NAME):
             self.success()
             return Goto(
                 Name(
@@ -893,11 +914,11 @@ class Builder:
 
     def parse_if_stat(self) -> If or bool:
         self.save()
-        if self.next_is_rc(Tokens.IFTOK):
+        if self.next_is_rc(LuaLexer.IF):
             self._expected = []
             test = self.parse_expr()
             if test:
-                if self.next_is_rc(Tokens.THEN, False) or True:
+                if self.next_is_rc(LuaLexer.THEN, False) or True:
                     self.handle_hidden_right()
                     body = self.parse_block()
                     if body:
@@ -914,7 +935,7 @@ class Builder:
                         else_exp = self.parse_else_stat()  # optional
                         if else_exp:
                             root.orelse = else_exp
-                        if self.next_is_rc(Tokens.END):
+                        if self.next_is_rc(LuaLexer.END):
                             self.success()
                             return main
                 self.abort()
@@ -922,10 +943,10 @@ class Builder:
 
     def parse_elseif_stat(self) -> ElseIf or bool:
         self.save()
-        if self.next_is_rc(Tokens.ELSEIF):
+        if self.next_is_rc(LuaLexer.ELSEIF):
             test = self.parse_expr()
             if test:
-                if self.next_is_rc(Tokens.THEN, False):
+                if self.next_is_rc(LuaLexer.THEN, False):
                     self.handle_hidden_right()
                     body = self.parse_block()
                     if body:
@@ -935,8 +956,8 @@ class Builder:
 
     def parse_else_stat(self) -> Block or bool:
         self.save()
-        if self.next_is(Tokens.ELSETOK):
-            if self.next_is_rc(Tokens.ELSETOK, False):
+        if self.next_is(LuaLexer.ELSE):
+            if self.next_is_rc(LuaLexer.ELSE, False):
                 self.handle_hidden_right()
                 body = self.parse_block()
                 if body:
@@ -946,23 +967,23 @@ class Builder:
 
     def parse_for_stat(self) -> Fornum or Forin or bool:
         self.save()
-        if self.next_is_rc(Tokens.FOR):
+        if self.next_is_rc(LuaLexer.FOR):
             self.save()
-            if self.next_is_rc(Tokens.NAME):
+            if self.next_is_rc(LuaLexer.NAME):
                 target = Name(
                     self.text,
                     first_token=self._LT,
                     last_token=self._LT,
                 )
-                if self.next_is_rc(Tokens.ASSIGN):
+                if self.next_is_rc(LuaLexer.ASSIGN):
                     start = self.parse_expr()
-                    if start and self.next_is_rc(Tokens.COMMA):
+                    if start and self.next_is_rc(LuaLexer.COMMA):
                         stop = self.parse_expr()
                         if stop:
                             step = 1
                             # optional step
-                            if self.next_is(Tokens.COMMA) and self.next_is_rc(
-                                    Tokens.COMMA
+                            if self.next_is(LuaLexer.COMMA) and self.next_is_rc(
+                                    LuaLexer.COMMA
                             ):
                                 step = self.parse_expr()
 
@@ -977,7 +998,7 @@ class Builder:
             self.failure_save()
             target = self.parse_name_list()
             if target:
-                if self.next_is_rc(Tokens.IN):
+                if self.next_is_rc(LuaLexer.IN):
                     iter_expr = self.parse_expr_list()
                     if iter_expr:
                         body = self.parse_optional_do_block()
@@ -985,7 +1006,7 @@ class Builder:
                             self.success()
                             self.success()
                             return Forin(body, iter_expr, target)
-                elif self.next_is_rc(Tokens.SEMCOL):
+                elif self.next_is_rc(LuaLexer.SEMCOL):
                     iter_expr = self.parse_expr_list()
                     if iter_expr:
                         first_expr = iter_expr[0]
@@ -1008,12 +1029,12 @@ class Builder:
     def parse_function(self) -> Method or Function or bool:
         self.save()
         self._expected = []
-        start_token = self.next_is_rc(Tokens.FUNCTION)
+        start_token = self.next_is_rc(LuaLexer.FUNCTION)
         if start_token:
             names = self.parse_names()
             if names:
                 self.save()
-                if self.next_is_rc(Tokens.COL) and self.next_is_rc(Tokens.NAME):
+                if self.next_is_rc(LuaLexer.COL) and self.next_is_rc(LuaLexer.NAME):
                     name = Name(
                         self.text,
                         first_token=self._LT,
@@ -1054,7 +1075,7 @@ class Builder:
 
     def parse_names(self) -> Name or Index or bool:
         self.save()
-        if self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.NAME):
             root = Name(
                 self.text,
                 first_token=self._LT,
@@ -1062,7 +1083,7 @@ class Builder:
             )
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.DOT) and self.next_is_rc(Tokens.NAME):
+                if self.next_is_rc(LuaLexer.DOT) and self.next_is_rc(LuaLexer.NAME):
                     self.success()
                     child = Index(
                         Name(
@@ -1084,16 +1105,16 @@ class Builder:
         """If success, return a tuple (args, body)"""
         self.save()
         self._expected = []
-        if self.next_is_rc(Tokens.OPAR, False):  # do not render right hidden
-            self.handle_hidden_right()  # render hidden after new level
+        if self.next_is_rc(LuaLexer.OPAR, False):  # do not render right hidden
+            self.handle_hidden_right()  # render hidden bases after new level
             args = self.parse_param_list()
             if args is not None:  # may be an empty table
-                if self.next_is_rc(Tokens.CPAR, False):  # do not render right hidden
+                if self.next_is_rc(LuaLexer.CPAR, False):  # do not render right hidden
                     self.handle_hidden_right()  # render hidden after new level
                     body = self.parse_block()
                     if body:
                         self._expected = []
-                        token = self.next_is_rc(Tokens.END, False)
+                        token = self.next_is_rc(LuaLexer.END, False)
                         if token:
                             body.last_token = token
                             self.success()
@@ -1108,7 +1129,7 @@ class Builder:
         param_list: List[Expression] = self.parse_name_list()
         if param_list:
             self.save()
-            if self.next_is_rc(Tokens.COMMA) and self.next_is_rc(Tokens.VARARGS):
+            if self.next_is_rc(LuaLexer.COMMA) and self.next_is_rc(LuaLexer.VARARGS):
                 self.success()
                 param_list.append(Varargs())
                 return param_list
@@ -1117,7 +1138,7 @@ class Builder:
                 return param_list
 
         self.save()
-        if self.next_is_rc(Tokens.VARARGS):
+        if self.next_is_rc(LuaLexer.VARARGS):
             self.success()
             return [Varargs()]
 
@@ -1127,7 +1148,7 @@ class Builder:
     def parse_name_list(self) -> List[Name] or bool:
         self.save()
         names: List[Name] = []
-        if self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.NAME):
             names.append(
                 Name(
                     self.text,
@@ -1137,7 +1158,7 @@ class Builder:
             )
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.COMMA) and self.next_is_rc(Tokens.NAME):
+                if self.next_is_rc(LuaLexer.COMMA) and self.next_is_rc(LuaLexer.NAME):
                     names.append(
                         Name(
                             self.text,
@@ -1155,13 +1176,13 @@ class Builder:
 
     def parse_label(self) -> Label or bool:
         self.save()
-        if self.next_is_rc(Tokens.COLCOL) and self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.COLCOL) and self.next_is_rc(LuaLexer.NAME):
             name = Name(
                 self.text,
                 first_token=self._LT,
                 last_token=self._LT,
             )
-            if self.next_is_rc(Tokens.COLCOL):
+            if self.next_is_rc(LuaLexer.COLCOL):
                 self.success()
                 return Label(name)
 
@@ -1169,24 +1190,24 @@ class Builder:
 
     def parse_callee(self) -> Expression or bool:
         self.save()
-        if self.next_is_rc(Tokens.OPAR):
+        if self.next_is_rc(LuaLexer.OPAR):
             expr = self.parse_expr()
             if expr:
-                if self.next_is_rc(Tokens.CPAR):
+                if self.next_is_rc(LuaLexer.CPAR):
                     self.success()
                     expr.wrapped = True
                     return expr
         self.failure()
         self.save()
-        if self.next_is_rc(Tokens.CONCAT):
-            if self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.CONCAT):
+            if self.next_is_rc(LuaLexer.NAME):
                 self.success()
                 return StringifiedName(
                     self.text,
                     first_token=self._LT,
                     last_token=self._LT,
                 )
-        if self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.NAME):
             self.success()
             return Name(
                 self.text,
@@ -1204,7 +1225,7 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.OR):
+                if self.next_is_rc(LuaLexer.OR):
                     right = self.parse_and_expr()
                     if right:
                         self.success()
@@ -1226,7 +1247,7 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.AND):
+                if self.next_is_rc(LuaLexer.AND):
                     right = self.parse_rel_expr()
                     if right:
                         self.success()
@@ -1252,17 +1273,17 @@ class Builder:
                 right = self.parse_concat_expr()
                 if right:
                     self.success()
-                    if op == Tokens.LT:
+                    if op == LuaLexer.LT:
                         left = LessThanOp(left, right)
-                    elif op == Tokens.GT:
+                    elif op == LuaLexer.GT:
                         left = GreaterThanOp(left, right)
-                    elif op == Tokens.LTEQ:
+                    elif op == LuaLexer.LTEQ:
                         left = LessOrEqThanOp(left, right)
-                    elif op == Tokens.GTEQ:
+                    elif op == LuaLexer.GTEQ:
                         left = GreaterOrEqThanOp(left, right)
-                    elif op == Tokens.NEQ:
+                    elif op == LuaLexer.NEQ:
                         left = NotEqToOp(left, right)
-                    elif op == Tokens.EQ:
+                    elif op == LuaLexer.EQ:
                         left = EqToOp(left, right)
                 else:
                     self.failure()
@@ -1279,7 +1300,7 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.CONCAT):
+                if self.next_is_rc(LuaLexer.CONCAT):
                     self._expected = []
                     right = self.parse_add_expr()
                     if right:
@@ -1303,14 +1324,14 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_in_rc([Tokens.ADD, Tokens.MINUS]):
+                if self.next_in_rc([LuaLexer.ADD, LuaLexer.MINUS]):
                     op = self.type
                     right = self.parse_mult_expr()
                     if right:
                         self.success()
-                        if op == Tokens.ADD:
+                        if op == LuaLexer.ADD:
                             left = AddOp(left, right)
-                        elif op == Tokens.MINUS:
+                        elif op == LuaLexer.MINUS:
                             left = SubOp(left, right)
                     else:
                         self.failure()
@@ -1329,18 +1350,18 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_in_rc([Tokens.MULT, Tokens.DIV, Tokens.MOD, Tokens.FLOOR]):
+                if self.next_in_rc([LuaLexer.MULT, LuaLexer.DIV, LuaLexer.MOD, LuaLexer.FLOOR]):
                     op = self.type
                     right = self.parse_bitwise_expr()
                     if right:
                         self.success()
-                        if op == Tokens.MULT:
+                        if op == LuaLexer.MULT:
                             left = MultOp(left, right)
-                        elif op == Tokens.DIV:
+                        elif op == LuaLexer.DIV:
                             left = FloatDivOp(left, right)
-                        elif op == Tokens.MOD:
+                        elif op == LuaLexer.MOD:
                             left = ModOp(left, right)
-                        elif op == Tokens.FLOOR:
+                        elif op == LuaLexer.FLOOR:
                             left = FloorDivOp(left, right)
                     else:
                         self.failure()
@@ -1361,26 +1382,26 @@ class Builder:
                 self.save()
                 if self.next_in_rc(
                         [
-                            Tokens.BITAND,
-                            Tokens.BITOR,
-                            Tokens.BITNOT,
-                            Tokens.BITRSHIFT,
-                            Tokens.BITRLEFT,
+                            LuaLexer.BITAND,
+                            LuaLexer.BITOR,
+                            LuaLexer.BITNOT,
+                            LuaLexer.BITRSHIFT,
+                            LuaLexer.BITRLEFT,
                         ]
                 ):
                     op = self.type
                     right = self.parse_unary_expr()
                     if right:
                         self.success()
-                        if op == Tokens.BITAND:
+                        if op == LuaLexer.BITAND:
                             left = BAndOp(left, right)
-                        elif op == Tokens.BITOR:
+                        elif op == LuaLexer.BITOR:
                             left = BOrOp(left, right)
-                        elif op == Tokens.BITNOT:
+                        elif op == LuaLexer.BITNOT:
                             left = BXorOp(left, right)
-                        elif op == Tokens.BITRSHIFT:
+                        elif op == LuaLexer.BITRSHIFT:
                             left = BShiftROp(left, right)
-                        elif op == Tokens.BITRLEFT:
+                        elif op == LuaLexer.BITRLEFT:
                             left = BShiftLOp(left, right)
                     else:
                         self.failure()
@@ -1395,7 +1416,7 @@ class Builder:
 
     def parse_unary_expr(self) -> Expression or bool:
         self.save()
-        if self.next_is_rc(Tokens.MINUS):
+        if self.next_is_rc(LuaLexer.MINUS):
             t: Token = self._LT
             expr = self.parse_unary_expr()
             if expr:
@@ -1403,7 +1424,7 @@ class Builder:
                 return UMinusOp(expr, first_token=t, last_token=t)
 
         self.failure_save()
-        if self.next_is_rc(Tokens.LENGTH):
+        if self.next_is_rc(LuaLexer.LENGTH):
             t: Token = self._LT
             expr = self.parse_expr()
             if expr:
@@ -1411,7 +1432,7 @@ class Builder:
                 return ULengthOP(expr, first_token=t, last_token=t)
 
         self.failure_save()
-        if self.next_is_rc(Tokens.NOT):
+        if self.next_is_rc(LuaLexer.NOT):
             t: Token = self._LT
             expr = self.parse_unary_expr()
             if expr:
@@ -1419,7 +1440,7 @@ class Builder:
                 return ULNotOp(expr, first_token=t, last_token=t)
 
         self.failure_save()
-        if self.next_is_rc(Tokens.BITNOT):
+        if self.next_is_rc(LuaLexer.BITNOT):
             t: Token = self._LT
             expr = self.parse_unary_expr()
             if expr:
@@ -1440,7 +1461,7 @@ class Builder:
         if left:
             while True:
                 self.save()
-                if self.next_is_rc(Tokens.POW):
+                if self.next_is_rc(LuaLexer.POW):
                     right = self.parse_expr()
                     if right:
                         self.success()
@@ -1466,10 +1487,10 @@ class Builder:
         atom = self.parse_table_constructor()
         if atom:
             return atom
-        if self.next_is(Tokens.VARARGS) and self.next_is_rc(Tokens.VARARGS):
+        if self.next_is(LuaLexer.VARARGS) and self.next_is_rc(LuaLexer.VARARGS):
             return Varargs()
 
-        if self.next_is(Tokens.NUMBER) and self.next_is_rc(Tokens.NUMBER):
+        if self.next_is(LuaLexer.NUMBER) and self.next_is_rc(LuaLexer.NUMBER):
             # TODO: optimize
             # using python number eval to parse lua number
             try:
@@ -1483,17 +1504,17 @@ class Builder:
                 last_token=self._LT,
             )
 
-        if self.next_is(Tokens.STRING) and self.next_is_rc(Tokens.STRING):
+        if self.next_is(LuaLexer.STRING) and self.next_is_rc(LuaLexer.STRING):
             string = self.parse_lua_str(self.text, self._LT)
             return string
 
-        if self.next_is(Tokens.NIL) and self.next_is_rc(Tokens.NIL):
+        if self.next_is(LuaLexer.NIL) and self.next_is_rc(LuaLexer.NIL):
             return Nil(first_token=self._LT, last_token=self._LT)
 
-        if self.next_is(Tokens.TRUE) and self.next_is_rc(Tokens.TRUE):
+        if self.next_is(LuaLexer.TRUE) and self.next_is_rc(LuaLexer.TRUE):
             return TrueExpr(first_token=self._LT, last_token=self._LT)
 
-        if self.next_is(Tokens.FALSE) and self.next_is_rc(Tokens.FALSE):
+        if self.next_is(LuaLexer.FALSE) and self.next_is_rc(LuaLexer.FALSE):
             return FalseExpr(first_token=self._LT, last_token=self._LT)
         return None
 
@@ -1520,7 +1541,7 @@ class Builder:
 
     def parse_function_literal(self) -> AnonymousFunction or bool:
         self.save()
-        if self.next_is_rc(Tokens.FUNCTION):
+        if self.next_is_rc(LuaLexer.FUNCTION):
             t: Token = self._LT
             func_body = self.parse_func_body()
             if func_body:
@@ -1538,11 +1559,11 @@ class Builder:
 
     def parse_table_constructor(self, render_last_hidden=True) -> Table or bool:
         self.save()
-        if self.next_is_rc(Tokens.OBRACE, False):  # do not render right hidden
+        if self.next_is_rc(LuaLexer.OBRACE, False):  # do not render right hidden
             self.handle_hidden_right()  # render hidden after new level
 
             fields = self.parse_field_list()
-            if self.next_is_rc(Tokens.CBRACE, render_last_hidden):
+            if self.next_is_rc(LuaLexer.CBRACE, render_last_hidden):
                 self.success()
 
                 array_like_index = 1
@@ -1565,7 +1586,7 @@ class Builder:
             field_list.append(field)
             while True:
                 self.save()
-                if self.next_in_rc([Tokens.COMMA, Tokens.SEMCOL]):
+                if self.next_in_rc([LuaLexer.COMMA, LuaLexer.SEMCOL]):
                     inline_com = self.get_inline_comment()
                     if inline_com:
                         field.comments.append(inline_com)
@@ -1591,10 +1612,10 @@ class Builder:
     def parse_field(self) -> Tuple[Field or bool, Comments]:
         self.save()
 
-        if self.next_is_rc(Tokens.OBRACK):
+        if self.next_is_rc(LuaLexer.OBRACK):
             key = self.parse_expr()
-            if key and self.next_is_rc(Tokens.CBRACK):
-                if self.next_is_rc(Tokens.ASSIGN):
+            if key and self.next_is_rc(LuaLexer.CBRACK):
+                if self.next_is_rc(LuaLexer.ASSIGN):
                     comments = self.get_comments()
                     value = self.parse_expr()
                     if value:
@@ -1605,7 +1626,7 @@ class Builder:
                         )
 
         self.failure_save()
-        if self.next_is_rc(Tokens.CONCAT):
+        if self.next_is_rc(LuaLexer.CONCAT):
             comments = self.get_comments()
             value = self.parse_expr()
             if value:
@@ -1616,13 +1637,13 @@ class Builder:
                     self.success()
                     return Field(value.idx, value, comments=comments), comments
 
-        if self.next_is_rc(Tokens.NAME):
+        if self.next_is_rc(LuaLexer.NAME):
             key = Name(
                 self.text,
                 first_token=self._LT,
                 last_token=self._LT,
             )
-            if self.next_is_rc(Tokens.ASSIGN):
+            if self.next_is_rc(LuaLexer.ASSIGN):
                 comments = self.get_comments()
                 value = self.parse_expr()
                 if value:
@@ -1644,7 +1665,7 @@ class Builder:
 
     def parse_field_sep(self) -> bool:
         self.save()
-        if self.next_in_rc([Tokens.COMMA, Tokens.SEMCOL]):
+        if self.next_in_rc([LuaLexer.COMMA, LuaLexer.SEMCOL]):
             return self.success()
         return self.failure()
 

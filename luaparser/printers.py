@@ -583,3 +583,11 @@ class LuaOutputVisitor:
     @visit.register
     def visit(self, node: SemiColon) -> str:
         return ";"
+
+    @visit.register
+    def visit(self, node: RequiredField) -> str:
+        return self.do_visit(node.value) + "!"
+
+    @visit.register
+    def visit(self, node: OptionalField) -> str:
+        return self.do_visit(node.value) + "?"
