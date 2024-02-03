@@ -21,15 +21,24 @@ class Comma():
 
 class MyLuaParserVisitor(LuaParserVisitor):
 
+    def split_list(self, lst, splitter):
+        if any(isinstance(i, splitter) for i in lst):
+            index = next(i for i, x in enumerate(lst) if isinstance(x, Pipe))
+            return lst[:index], lst[index + 1:]
+        else:
+            return None
+
     def defaultResult(self):
         return None
 
     def aggregateResult(self, aggregate, nextResult):
-        if aggregate is None:
-            return [nextResult]
         if isinstance(aggregate, list):
             aggregate.append(nextResult)
             return aggregate
+        if aggregate is None:
+            return nextResult
+        else:
+            return [aggregate, nextResult]
 
     def visitChunk(self, ctx: LuaParser.ChunkContext):
         print("visitChunk")
@@ -56,7 +65,7 @@ class MyLuaParserVisitor(LuaParserVisitor):
 
     def visitVar(self, ctx: LuaParser.VarContext):
         print("visitVar")
-        return self.visitChildren(ctx)[0]
+        return self.visitChildren(ctx)
 
     def visitExplist(self, ctx: LuaParser.ExplistContext):
         print("visitExplist")
@@ -65,15 +74,22 @@ class MyLuaParserVisitor(LuaParserVisitor):
         return exp_list
 
     def visitExp(self, ctx:LuaParser.ExpContext):
-        return self.visitChildren(ctx)[0]
+        return self.visitChildren(ctx)
 
 
     def visitString(self, ctx: LuaParser.StringContext):
         s = self.visitChildren(ctx)
-        return String(s[0])
+        return String(s)
 
     def visitFunctioncall(self, ctx:LuaParser.FunctioncallContext):
-        return self.visitChildren(ctx)
+        call = self.visitChildren(ctx)
+
+        split = self.split_list(call, Pipe)
+        if split:
+            return Call(split[0][0], split[1])
+        else:
+            raise Exception("Invalid call")
+
 
     def visitTerminal(self, node):
         token: Token = node.getSymbol()
